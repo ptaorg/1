@@ -5,6 +5,11 @@ const SITE_INDEX=[
     "PTA問題を、資料の量で押し切る"
   ],
   [
+    "立場別ガイド",
+    "guide.html",
+    "保護者・PTA役員・教委・学校・研究者向け"
+  ],
+  [
     "調査地図",
     "map.html",
     "76自治体を概略位置で表示"
@@ -27,7 +32,7 @@ const SITE_INDEX=[
   [
     "教委向け指針",
     "ed.html",
-    "教育委員会・学校管理職向け指針"
+    "教育委員会・学校管理職向け詳細指針"
   ],
   [
     "論考アーカイブ",
@@ -175,16 +180,45 @@ function getRootPrefix(){
   return location.pathname.includes("/journal/") ? "../" : "";
 }
 
-function initNavToggle(){
+// モバイルオーバーレイ開閉
+function initMobileOverlay(){
   const btn = document.querySelector(".nav-toggle");
-  const links = document.querySelector(".links");
-  if (!btn || !links) return;
+  const overlay = document.getElementById("mobileOverlay");
+  const close = document.getElementById("closeOverlay");
+  if (!btn || !overlay) return;
   btn.addEventListener("click", () => {
-    const open = links.classList.toggle("is-open");
-    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    overlay.classList.add("is-open");
+    btn.setAttribute("aria-expanded", "true");
+    document.body.style.overflow = "hidden";
+  });
+  if (close) close.addEventListener("click", () => {
+    overlay.classList.remove("is-open");
+    btn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+  });
+}
+
+// ドロップダウン: クリックでも開閉(タッチデバイス対応)
+function initDropdowns(){
+  document.querySelectorAll(".nav-item.has-dropdown > .nav-link").forEach(link => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const item = link.closest(".nav-item");
+      // 他のドロップダウンを閉じる
+      document.querySelectorAll(".nav-item.is-open").forEach(x => {
+        if (x !== item) x.classList.remove("is-open");
+      });
+      item.classList.toggle("is-open");
+    });
+  });
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".nav-item")) {
+      document.querySelectorAll(".nav-item.is-open").forEach(x => x.classList.remove("is-open"));
+    }
   });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  initNavToggle();
+  initMobileOverlay();
+  initDropdowns();
 });
