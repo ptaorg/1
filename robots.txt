@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ptaorg.github.io/1/sitemap.xml
